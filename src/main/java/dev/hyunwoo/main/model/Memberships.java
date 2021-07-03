@@ -11,7 +11,6 @@ public class Memberships {
 
     private Integer amount;
 
-
     public Memberships() {
     }
 
@@ -91,7 +90,6 @@ public class Memberships {
     public void setPoint(Integer point) {
         this.point = point;
     }
-    
 
     public Integer getAmount() {
         return amount;

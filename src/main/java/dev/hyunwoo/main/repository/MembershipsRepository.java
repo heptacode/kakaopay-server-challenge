@@ -18,8 +18,12 @@ public class MembershipsRepository {
     public List<Memberships> fetch(String userId) {
         try {
             String select = "SELECT * FROM memberships WHERE userId=? AND membershipStatus='Y'";
-            List<Memberships> memberships = template.query(select, (result, rowNum) -> new Memberships(result.getInt("seq"), result.getString("membershipId"), result.getString("userId"), result.getString("membershipName"), result.getString("startDate"), result.getString("membershipStatus"), result.getInt(
-                    "point")), userId);
+            List<Memberships> memberships = template.query(select,
+                    (result, idx) -> new Memberships(result.getInt("seq"), result.getString("membershipId"),
+                            result.getString("userId"), result.getString("membershipName"),
+                            result.getString("startDate"), result.getString("membershipStatus"),
+                            result.getInt("point")),
+                    userId);
             return memberships;
         } catch (Exception e) {
             System.out.println("Fetch > " + e);
@@ -29,13 +33,25 @@ public class MembershipsRepository {
 
     public List<Memberships> register(String userId, String membershipId, String membershipName, Integer point) {
         try {
-            String insert = "INSERT INTO memberships(userId, membershipId, membershipName, startDate, membershipStatus, point) VALUES(?,?,?,?,?,?)";
-            template.update(insert, userId, membershipId, membershipName, LocalDateTime.now(), 'Y', point);
+            String select = "SELECT count(*) AS CNT FROM memberships WHERE userId=? AND membershipId=? AND membershipStatus='Y'";
+            int count = template.queryForObject(select, (result, idx) -> result.getInt("CNT"), userId,
+                    membershipId);
 
-            String select = "SELECT * FROM memberships WHERE userId=?";
-            List<Memberships> memberships = template.query(select, (result, rowNum) -> new Memberships(result.getInt("seq"), result.getString("membershipId"), result.getString("userId"), result.getString("membershipName"), result.getString("startDate"), result.getString("membershipStatus"), result.getInt(
-                    "point")), userId);
-            return memberships;
+            if (count <= 0) {
+                String insert = "INSERT INTO memberships(userId, membershipId, membershipName, startDate, membershipStatus, point) VALUES(?,?,?,?,?,?)";
+                template.update(insert, userId, membershipId, membershipName, LocalDateTime.now(), 'Y', point);
+
+                select = "SELECT * FROM memberships WHERE userId=?";
+                List<Memberships> memberships = template.query(select,
+                        (result, idx) -> new Memberships(result.getInt("seq"), result.getString("membershipId"),
+                                result.getString("userId"), result.getString("membershipName"),
+                                result.getString("startDate"), result.getString("membershipStatus"),
+                                result.getInt("point")),
+                        userId);
+                return memberships;
+            }
+            return null;
+
         } catch (Exception e) {
             System.out.println("Register > " + e);
         }
@@ -55,8 +71,12 @@ public class MembershipsRepository {
     public Memberships search(String userId, String membershipId) {
         try {
             String select = "SELECT * FROM memberships WHERE userID=? AND membershipId=? AND membershipStatus='Y'";
-            Memberships membership = template.queryForObject(select, (result, rowNum) -> new Memberships(result.getInt("seq"), result.getString("membershipId"), result.getString("userId"), result.getString("membershipName"), result.getString("startDate"), result.getString("membershipStatus"), result.getInt(
-                "point")), userId, membershipId);
+            Memberships membership = template.queryForObject(select,
+                    (result, idx) -> new Memberships(result.getInt("seq"), result.getString("membershipId"),
+                            result.getString("userId"), result.getString("membershipName"),
+                            result.getString("startDate"), result.getString("membershipStatus"),
+                            result.getInt("point")),
+                    userId, membershipId);
             return membership;
         } catch (Exception e) {
             System.out.println("Search > " + e);
@@ -67,11 +87,12 @@ public class MembershipsRepository {
     public int accumulate(String userId, String membershipId, Integer amount) {
         try {
             String select = "SELECT point FROM memberships WHERE userId=? AND membershipId=? AND membershipStatus='Y'";
-            Integer point = template.queryForObject(select, (result, rowNum) -> (Integer) result.getInt("point"), userId, membershipId);
+            Integer point = template.queryForObject(select, (result, idx) -> (Integer) result.getInt("point"), userId,
+                    membershipId);
 
             Integer newPoint = (int) (point + amount * 0.01);
 
-            String update = "UPDATE memberships SET point=? WHERE userId=? AND membershipId=?";
+            String update = "UPDATE memberships SET point=? WHERE userId=? AND membershipId=? AND membershipStatus='Y'";
             return template.update(update, newPoint, userId, membershipId);
         } catch (Exception e) {
             System.out.println("Accumulate > " + e);
