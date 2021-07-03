@@ -5,8 +5,155 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      html {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        word-break: break-all;
+      }
+
+      body {
+        min-width: 400px;
+        width: 800px;
+        max-width: 1000px;
+        margin: 10px;
+      }
+
+      code {
+        margin-top: 20px;
+        padding: 20px;
+        display: block;
+        border-radius: 10px;
+        background-color: #e4e4e4;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      section {
+        width: 100%;
+        padding-bottom: 30px;
+        margin-bottom: 50px;
+        border-bottom: 1px solid #b9b9b9;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        background-color: white;
+        font-size: 16px;
+        align-self: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+        transition: 0.2s;
+        cursor: pointer;
+      }
+      button:hover {
+        filter: brightness(0.9);
+      }
+      button:active {
+        filter: brightness(0.825);
+      }
+
+      input {
+        width: 80%;
+        padding: 8px;
+        display: block;
+        border: none;
+        border-bottom: 1px solid #ccc;
+      }
+    </style>
   </head>
   <body>
-    Hello World!
+    <h1>KakaoPay Server Challenge</h1>
+    <section>
+      <h2>X-USER-ID Header</h2>
+      <input type="text" id="userId" value="test1" placeholder="userId" />
+    </section>
+
+    <section>
+      <h2>1. 멤버십 전체 조회</h2>
+      <button onclick="execute('fetch')">멤버십 전체 조회</button>
+      <code id="fetchCode"></code>
+    </section>
+
+    <section>
+      <h2>2. 멤버십 등록하기</h2>
+      <input type="text" id="registerMembershipId" value="cj" placeholder="registerMembershipId" />
+      <input type="text" id="registerMembershipName" value="cjone" placeholder="registerMembershipName" />
+      <input type="number" id="registerPoint" value="5210" placeholder="registerPoint" />
+      <br />
+      <button onclick="execute('register')">멤버십 등록하기</button>
+      <code id="registerCode"></code>
+    </section>
+
+    <section>
+      <h2>3. 멤버십 삭제(비활성화)하기</h2>
+      <input type="text" id="disableMembershipId" value="cj" placeholder="disableMembershipId" />
+      <br />
+      <button onclick="execute('disable')">멤버십 삭제(비활성화)하기</button>
+      <code id="disableCode"></code>
+    </section>
+
+    <section>
+      <h2>4. 멤버십 상세 조회하기</h2>
+      <input type="text" id="searchMembershipId" value="spc" placeholder="searchMembershipId" />
+      <br />
+      <button onclick="execute('search')">멤버십 상세 조회하기</button>
+      <code id="searchCode"></code>
+    </section>
+
+    <section>
+      <h2>5. 포인트 적립하기</h2>
+      <input type="text" id="accumulateMembershipId" value="cj" placeholder="accumulateMembershipId" />
+      <input type="number" id="accumulateAmount" value="100" placeholder="accumulateAmount" />
+      <br />
+      <button onclick="execute('accumulate')">포인트 적립하기</button>
+      <code id="accumulateCode"></code>
+    </section>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      async function execute(method) {
+        document.querySelectorAll("code").forEach((el) => (el.innerHTML = ""));
+
+        let data;
+        if (method === "fetch") {
+          data = (await axios.get("/web/api/v1/membership/", { headers: { "X-USER-ID": document.getElementById("userId").value } })).data;
+          document.getElementById("fetchCode").innerHTML = JSON.stringify(data);
+        } else if (method === "register") {
+          data = (
+            await axios.post(
+              "/web/api/v1/membership/",
+              {
+                membershipId: document.getElementById("registerMembershipId").value,
+                membershipName: document.getElementById("registerMembershipName").value,
+                point: document.getElementById("registerPoint").value,
+              },
+              { headers: { "X-USER-ID": document.getElementById("userId").value } }
+            )
+          ).data;
+          document.getElementById("registerCode").innerHTML = JSON.stringify(data);
+        } else if (method === "disable") {
+          data = (await axios.delete(`/web/api/v1/membership/${document.getElementById("disableMembershipId").value}`, { headers: { "X-USER-ID": document.getElementById("userId").value } })).data;
+          document.getElementById("disableCode").innerHTML = JSON.stringify(data);
+        } else if (method === "search") {
+          data = (await axios.get(`/web/api/v1/membership/${document.getElementById("searchMembershipId").value}`, { headers: { "X-USER-ID": document.getElementById("userId").value } })).data;
+          document.getElementById("searchCode").innerHTML = JSON.stringify(data);
+        } else if (method === "accumulate") {
+          data = (
+            await axios.put(
+              "/web/api/v1/membership/point",
+              {
+                membershipId: document.getElementById("accumulateMembershipId").value,
+                amount: document.getElementById("accumulateAmount").value,
+              },
+              { headers: { "X-USER-ID": document.getElementById("userId").value } }
+            )
+          ).data;
+          document.getElementById("accumulateCode").innerHTML = JSON.stringify(data);
+        }
+      }
+    </script>
   </body>
 </html>
