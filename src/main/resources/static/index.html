@@ -119,12 +119,12 @@
 
         let data;
         if (method === "fetch") {
-          data = (await axios.get("/web/api/v1/membership/", { headers: { "X-USER-ID": document.getElementById("userId").value } })).data;
+          data = (await axios.get("./api/v1/membership", { headers: { "X-USER-ID": document.getElementById("userId").value } })).data;
           document.getElementById("fetchCode").innerHTML = JSON.stringify(data);
         } else if (method === "register") {
           data = (
             await axios.post(
-              "/web/api/v1/membership/",
+              "./api/v1/membership",
               {
                 membershipId: document.getElementById("registerMembershipId").value,
                 membershipName: document.getElementById("registerMembershipName").value,
@@ -135,15 +135,15 @@
           ).data;
           document.getElementById("registerCode").innerHTML = JSON.stringify(data);
         } else if (method === "disable") {
-          data = (await axios.delete(`/web/api/v1/membership/${document.getElementById("disableMembershipId").value}`, { headers: { "X-USER-ID": document.getElementById("userId").value } })).data;
+          data = (await axios.delete(`./api/v1/membership/${document.getElementById("disableMembershipId").value}`, { headers: { "X-USER-ID": document.getElementById("userId").value } })).data;
           document.getElementById("disableCode").innerHTML = JSON.stringify(data);
         } else if (method === "search") {
-          data = (await axios.get(`/web/api/v1/membership/${document.getElementById("searchMembershipId").value}`, { headers: { "X-USER-ID": document.getElementById("userId").value } })).data;
+          data = (await axios.get(`./api/v1/membership/${document.getElementById("searchMembershipId").value}`, { headers: { "X-USER-ID": document.getElementById("userId").value } })).data;
           document.getElementById("searchCode").innerHTML = JSON.stringify(data);
         } else if (method === "accumulate") {
           data = (
             await axios.put(
-              "/web/api/v1/membership/point",
+              "./api/v1/membership/point",
               {
                 membershipId: document.getElementById("accumulateMembershipId").value,
                 amount: document.getElementById("accumulateAmount").value,
