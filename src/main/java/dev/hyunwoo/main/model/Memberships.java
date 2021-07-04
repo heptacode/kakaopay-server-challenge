@@ -1,21 +1,21 @@
 package dev.hyunwoo.main.model;
 
 public class Memberships {
-    private Integer seq;
+    private int seq;
     private String membershipId;
     private String userId;
     private String membershipName;
     private String startDate;
     private String membershipStatus;
-    private Integer point;
+    private int point;
 
-    private Integer amount;
+    private int amount;
 
     public Memberships() {
     }
 
     public Memberships(String membershipId, String userId, String membershipName, String startDate,
-            String membershipStatus, Integer point) {
+            String membershipStatus, int point) {
         this.membershipId = membershipId;
         this.userId = userId;
         this.membershipName = membershipName;
@@ -24,8 +24,8 @@ public class Memberships {
         this.point = point;
     }
 
-    public Memberships(Integer seq, String membershipId, String userId, String membershipName, String startDate,
-            String membershipStatus, Integer point) {
+    public Memberships(int seq, String membershipId, String userId, String membershipName, String startDate,
+            String membershipStatus, int point) {
         this.seq = seq;
         this.membershipId = membershipId;
         this.userId = userId;
@@ -35,11 +35,11 @@ public class Memberships {
         this.point = point;
     }
 
-    public Integer getSeq() {
+    public int getSeq() {
         return seq;
     }
 
-    public void setSeq(Integer seq) {
+    public void setSeq(int seq) {
         this.seq = seq;
     }
 
@@ -83,15 +83,15 @@ public class Memberships {
         this.membershipStatus = membershipStatus;
     }
 
-    public Integer getPoint() {
+    public int getPoint() {
         return point;
     }
 
-    public void setPoint(Integer point) {
+    public void setPoint(int point) {
         this.point = point;
     }
 
-    public Integer getAmount() {
+    public int getAmount() {
         return amount;
     }
 }
